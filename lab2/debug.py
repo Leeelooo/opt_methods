@@ -67,6 +67,9 @@ def df_fourth(X, i):
     return dfourth[i](X)
 
 
+np.random.seed(42)
+
+
 equations = {
     '100(x_2−x_1^2)^2+(1-x_1)^2': [f_first, df_first, np.random.random(len(dfirst)) * 0.1],
     '(x_2−x_1^2)^2+(1-x_1)^2': [f_second, df_second, np.random.random(len(dsecond)) * 0.1],
