@@ -183,7 +183,7 @@ def coordinate_descent(X0, f, df, eps=1e-5, max_iter=5e4):
     k = 0
 
     X = X0.copy()
-    coords.append([X, X])
+    coords.append(X)
     values.append(f(X))
 
     while k < max_iter:
@@ -192,11 +192,10 @@ def coordinate_descent(X0, f, df, eps=1e-5, max_iter=5e4):
         g[i] = df(X, i)
         f_next_X = lambda a: X - a * g
         alpha = golden_ratio(lambda a: f(f_next_X(a)), eps, 1, epsilon=eps)
-        next_X = f_next_X(alpha)
+        X = f_next_X(alpha)
 
-        coords.append([next_X, X])
-        values.append(f(next_X))
-        prev_X, X = X, next_X
+        coords.append(X)
+        values.append(f(X))
         k += 1
 
         if np.sum(np.abs(values[-1] - values[-2])) < eps:
@@ -212,18 +211,17 @@ def steepest_descent(X0, f, df, eps=1e-5, max_iter=5e4):
     k = 0
 
     X = X0.copy()
-    coords.append([X, X])
+    coords.append(X)
     values.append(f(X))
 
     while k < max_iter:
         g = np.array([df(X, i) for i in range(args_count)])
         f_next_X = lambda a: X - a * g
         alpha = golden_ratio(lambda a: f(f_next_X(a)), eps, 1, epsilon=eps)
-        next_X = f_next_X(alpha)
+        X = f_next_X(alpha)
 
-        coords.append([next_X, X])
-        values.append(f(next_X))
-        prev_X, X = X, next_X
+        coords.append(X)
+        values.append(f(X))
         k += 1
 
         if np.sum(np.abs(values[-1] - values[-2])) < eps:
@@ -253,8 +251,8 @@ def risovalka(coords, f):
 
     pylab.plot(coords[:, 0], coords[:, 1], color='red')
 
-    pylab.scatter(coords[:1, 0], coords[:1, 1], color='orange', s=50)
-    pylab.scatter(coords[-1:, 0], coords[-1:, 1], color='blue', s=50)
+    pylab.scatter(x=coords[0][0],y=coords[0][1], color='orange', s=50)
+    pylab.scatter(x=coords[-1][0],y=coords[-1][1], color='blue', s=50)
 
     cs = pylab.contour(xgrid, ygrid, zgrid, 21)
     pylab.clabel(cs)
@@ -270,6 +268,6 @@ for descent in gradient_descents:
     for equation in equations:
         f, df, X0 = equations[equation]
         coords, values = gradient_descents[descent](X0, f, df)
-        print(f'{descent}, min of {equation} is {coords[-1][0]} with value {values[-1]}')
+        print(f'{descent}, min of {equation} is {coords[-1]} with value {values[-1]}')
         if len(X0) == 2:
             risovalka(coords, f)
