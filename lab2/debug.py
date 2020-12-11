@@ -1,10 +1,8 @@
 # %%
 
-import matplotlib.pyplot as plt
 import numpy as np
-import pylab
 import pandas as pd
-from matplotlib.collections import LineCollection
+import pylab
 
 
 def f_first(X):
@@ -68,7 +66,6 @@ def df_fourth(X, i):
 
 
 np.random.seed(42)
-
 
 equations = {
     '100(x_2−x_1^2)^2+(1-x_1)^2': [f_first, df_first, np.random.random(len(dfirst)) * 0.1],
@@ -146,11 +143,13 @@ def brent(f, df, start, end, eps=1e-5):
                 f_v = f_u
                 df_v = df_u
 
-            if abs(d - g) > eps and end - start != 0:
-                break
+        if np.abs(u - step_details[-1][-3]) < eps:
+            break
 
-    step_details.append([start, end, x, f_x, df_x, w, f_w, df_w, v, f_v, df_v, d, e])
-    return x, function_calls_number, step_details
+    step_details.append([start, end, x, f_x, df_x, w, f_w, df_w, v, f_v, df_v, d, e, u, f_u, df_u])
+    return x, function_calls_number, pd.DataFrame(step_details,
+                                                  columns=['start', 'end', 'x', 'f_x', 'df_x', 'w', 'f_w', 'df_w', 'v',
+                                                           'f_v', 'df_v', 'd', 'e', 'u', 'f_u', 'df_u'])
 
 
 def golden_ratio(function, start, end, epsilon=1e-5):
@@ -254,8 +253,8 @@ def risovalka(coords, f):
 
     pylab.plot(coords[:, 0], coords[:, 1], color='red')
 
-    pylab.scatter(x=coords[0][0],y=coords[0][1], color='orange', s=50)
-    pylab.scatter(x=coords[-1][0],y=coords[-1][1], color='blue', s=50)
+    pylab.scatter(x=coords[0][0], y=coords[0][1], color='orange', s=50)
+    pylab.scatter(x=coords[-1][0], y=coords[-1][1], color='blue', s=50)
 
     cs = pylab.contour(xgrid, ygrid, zgrid, 21)
     pylab.clabel(cs)
@@ -267,10 +266,52 @@ gradient_descents = {
     'steepest': steepest_descent,
 }
 
-for descent in gradient_descents:
-    for equation in equations:
-        f, df, X0 = equations[equation]
-        coords, values = gradient_descents[descent](X0, f, df)
-        print(f'{descent}, min of {equation} is {coords[-1]} with value {values[-1]}')
-        if len(X0) == 2:
-            risovalka(coords, f)
+# for descent in gradient_descents:
+#     for equation in equations:
+#         f, df, X0 = equations[equation]
+#         coords, values = gradient_descents[descent](X0, f, df)
+#         print(f'{descent}, min of {equation} is {coords[-1]} with value {values[-1]}')
+#         if len(X0) == 2:
+#             risovalka(coords, f)
+
+unimodal_functions = {
+    '-5x^5 + 4x^4 - 12x^3 + 11x^2 - 2x + 1, [-0.5,0.5]': (
+        lambda x: -5 * x ** 5 + 4 * x ** 4 - 12 * x ** 3 + 11 * x ** 2 - 2 * x + 1,
+        lambda x: -25 * x ** 4 + 16 * x ** 3 - 36 * x ** 2 + 22 * x - 2,
+        (-0.5, 0.5)
+    ),
+    'lg(x-2)^2 + lg(10-x)^2 - x^0.2, [6.9,9]': (
+        lambda x: np.log10(x - 2) ** 2 + np.log10(10 - x) ** 2 - np.power(x, 0.2),
+        lambda x: -0.2 * np.power(x, -0.8) + 2 * np.log(x - 2) / np.log(10) ** 2 / (x - 2) - 2 * np.log(10 - x) / np.log(
+            10) ** 2 / (10 - x),
+        (6, 9.9)
+    ),
+    '-3x*sin(0.75x) + e^(-2x), [0,2pi]': (
+        lambda x: -3 * x * np.sin(0.75 * x) + np.exp(-2 * x),
+        lambda x: -2 * np.exp(-2 * x) - 2.25 * x * np.cos(0.75 * x) - 3 * np.sin(0.75 * x),
+        (0, 2 * np.pi)
+    ),
+    'e^(3x) + 5e^(-2x), [0,1]': (
+        lambda x: np.exp(3 * x) + 5 * np.exp(-2 * x),
+        lambda x: 3 * np.exp(3 * x) - 10 * np.exp(-2 * x),
+        (0, 1)
+    ),
+    '0.2x*lg(x) + (x-2.3)^2, [0.5,2.5]': (
+        lambda x: 0.2 * x * np.log10(x) + (x - 2.3) ** 2,
+        lambda x: np.log(x) / 5 / np.log(10) + 2 * (x - 2.3) + 1 / 5 / np.log(10),
+        (0.5, 2.5)
+    )
+}
+
+for readable_func, func_number in zip(unimodal_functions, range(len(unimodal_functions))):
+    func = unimodal_functions[readable_func][0]
+    df = unimodal_functions[readable_func][1]
+    start_range, end_range = unimodal_functions[readable_func][2]
+
+    data = []
+    value, function_calls, step_details = brent(func, df, start_range, end_range)
+    data.append([value, func(value), function_calls, len(step_details)])
+
+    print(readable_func)
+    print(pd.DataFrame(data, columns=['x', 'y', 'function calls', 'iterations']))
+    print()
