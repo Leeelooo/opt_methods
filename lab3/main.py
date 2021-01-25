@@ -108,7 +108,9 @@ def test_solve(A, b):
 
 def test_inv(A):
     inv = lu_inverse(A)
-    inv_lib = scipy.linalg.inv(A)
+    # High mistake on small numbers
+    # inv_lib = scipy.linalg.inv(A)
+    inv_lib = np.linalg.inv(A)
 
     I = np.eye(A.shape[0])
 
@@ -127,7 +129,7 @@ def noisy_matrix(n):
 
 
 def hilbert_generator(n): return np.fromfunction(lambda i, j: 1 / (i + j + 1),
-                                                 (n, n), dtype=np.float)  # since we are starting from i=0 and j=0
+                                                 (n, n), dtype=np.double)  # since we are starting from i=0 and j=0
 
 
 TESTS = [
@@ -202,3 +204,4 @@ if __name__ == "__main__":
         print(f"TEST {name}")
         for A in args:
             func(*A)
+        print("="*80)
