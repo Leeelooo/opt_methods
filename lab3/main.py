@@ -122,31 +122,31 @@ def test_inv(A):
 def noisy_matrix(n):
     np.random.seed(59005)
 
-    matrix = -np.random.choice(5, size=(n, n))
+    matrix = -np.random.choice(5, size=(n, n)).astype(np.double)
     for i in range(n):
         matrix[i, i] = -(np.sum(matrix[i]) - matrix[i, i]) + 10 ** -n
 
     return matrix
 
 
-
-hilbert_generator = lambda n: np.fromfunction(lambda i, j: 1 / (i + j + 1), (n, n), dtype=np.float) # since we are starting from i=0 and j=0
+def hilbert_generator(n): return np.fromfunction(lambda i, j: 1 / (i + j + 1),
+                                                 (n, n), dtype=np.float)  # since we are starting from i=0 and j=0
 
 
 TESTS = [
     ("LU Decomposition", test_lu, (
-        (np.array([[1, 0, 3], [0, 3, 1], [0, 0, 6]])),
-        (np.array([[1, 4, 5], [6, 8, 22], [32, 5, 5]])),
-        (noisy_matrix(5)),
-        (noisy_matrix(7)),
-        (noisy_matrix(9)),
-        (noisy_matrix(11)),
-        (noisy_matrix(13)),
-        (hilbert_generator(5)),
-        (hilbert_generator(7)),
-        (hilbert_generator(9)),
-        (hilbert_generator(11)),
-        (hilbert_generator(13))
+        (np.array([[1, 0, 3], [0, 3, 1], [0, 0, 6]]),),
+        (np.array([[1, 4, 5], [6, 8, 22], [32, 5, 5]]),),
+        (noisy_matrix(5),),
+        (noisy_matrix(7),),
+        (noisy_matrix(9),),
+        (noisy_matrix(11),),
+        (noisy_matrix(13),),
+        (hilbert_generator(5),),
+        (hilbert_generator(7),),
+        (hilbert_generator(9),),
+        (hilbert_generator(11),),
+        (hilbert_generator(13),)
     )),
     ("LU Solve", test_solve, (
         (
@@ -185,18 +185,18 @@ TESTS = [
         )
     )),
     ("LU Inverse", test_inv, (
-        (np.array([[1, 0, 3], [0, 3, 1], [0, 0, 6]])),
-        (np.array([[1, 4, 5], [6, 8, 22], [32, 5, 5]])),
-        (noisy_matrix(5)),
-        (noisy_matrix(7)),
-        (noisy_matrix(9)),
-        (noisy_matrix(11)),
-        (noisy_matrix(13)),
-        (hilbert_generator(5)),
-        (hilbert_generator(7)),
-        (hilbert_generator(9)),
-        (hilbert_generator(11)),
-        (hilbert_generator(13))
+        (np.array([[1, 0, 3], [0, 3, 1], [0, 0, 6]]),),
+        (np.array([[1, 4, 5], [6, 8, 22], [32, 5, 5]]),),
+        (noisy_matrix(5),),
+        (noisy_matrix(7),),
+        (noisy_matrix(9),),
+        (noisy_matrix(11),),
+        (noisy_matrix(13),),
+        (hilbert_generator(5),),
+        (hilbert_generator(7),),
+        (hilbert_generator(9),),
+        (hilbert_generator(11),),
+        (hilbert_generator(13),)
     ))
 ]
 
@@ -204,7 +204,4 @@ if __name__ == "__main__":
     for name, func, args in TESTS:
         print(f"TEST {name}")
         for A in args:
-            if isinstance(A, np.ndarray):
-                func(A)
-            else:
-                func(*A)
+            func(*A)
