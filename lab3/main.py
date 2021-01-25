@@ -76,8 +76,7 @@ def lu_inverse(A):
     L, U = lu_doolittle(A)
 
     for i in range(n):
-        y = forward_substitution(L, b[i, :])
-
+        y = forward_substitution(L, b[:, i])
         A_inv[:, i] = back_substitution(U, y)
 
     return A_inv
@@ -101,22 +100,20 @@ def test_lu(A):
 
 def test_solve(A, b):
     x = lu_solve(A, b)
+    error_my = np.linalg.norm(A @ x - b)
+    error_lib = np.linalg.norm(A @ scipy.linalg.solve(A, b) - b)
 
-    error = np.linalg.norm(A @ x - b)
-    print(f'Error = {error}')
-
-    return error
+    print(f'error my:{error_my}\terror lib:{error_lib}')
 
 
 def test_inv(A):
     inv = lu_inverse(A)
     inv_lib = scipy.linalg.inv(A)
 
-    diff = np.linalg.norm(inv_lib - inv)
+    I = np.eye(A.shape[0])
 
-    print(f"diff with lib: {diff}")
-
-    return diff
+    print(
+        f"error my: {np.linalg.norm(A @ inv - I)}\terror lib:{np.linalg.norm(A @ inv_lib - I)}")
 
 
 def noisy_matrix(n):
