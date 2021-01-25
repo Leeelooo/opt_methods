@@ -266,13 +266,13 @@ gradient_descents = {
     'steepest': steepest_descent,
 }
 
-# for descent in gradient_descents:
-#     for equation in equations:
-#         f, df, X0 = equations[equation]
-#         coords, values = gradient_descents[descent](X0, f, df)
-#         print(f'{descent}, min of {equation} is {coords[-1]} with value {values[-1]}')
-#         if len(X0) == 2:
-#             risovalka(coords, f)
+for descent in gradient_descents:
+    for equation in equations:
+        f, df, X0 = equations[equation]
+        coords, values = gradient_descents[descent](X0, f, df)
+        print(f'{descent}, min of {equation} is {coords[-1]} with value {values[-1]}')
+        if len(X0) == 2:
+            risovalka(coords, f)
 
 unimodal_functions = {
     '-5x^5 + 4x^4 - 12x^3 + 11x^2 - 2x + 1, [-0.5,0.5]': (
