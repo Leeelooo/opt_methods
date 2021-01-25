@@ -1,5 +1,6 @@
 import numpy as np
 import scipy.linalg
+import tabulate
 
 
 def _check_square(A):
@@ -93,8 +94,7 @@ def test_lu(A):
     P, L, U = LU_FUNC(A)
     error_2 = np.linalg.norm(A - P @ L @ U)
 
-    print(f"error my: {error_1}\terror lib:{error_2}")
-
+    # print(f"error my: {error_1}\terror lib:{error_2}")
     return error_1, error_2
 
 
@@ -103,7 +103,8 @@ def test_solve(A, b):
     error_my = np.linalg.norm(A @ x - b)
     error_lib = np.linalg.norm(A @ scipy.linalg.solve(A, b) - b)
 
-    print(f'error my:{error_my}\terror lib:{error_lib}')
+    # print(f'error my:{error_my}\terror lib:{error_lib}')
+    return error_my, error_lib
 
 
 def test_inv(A):
@@ -113,9 +114,12 @@ def test_inv(A):
     inv_lib = np.linalg.inv(A)
 
     I = np.eye(A.shape[0])
+    error_my = np.linalg.norm(A @ inv - I)
+    error_lib = np.linalg.norm(A @ inv_lib - I)
 
-    print(
-        f"error my: {np.linalg.norm(A @ inv - I)}\terror lib:{np.linalg.norm(A @ inv_lib - I)}")
+    # print(
+    #     f"error my: {error_my}\terror lib:{error_lib}")
+    return error_my, error_lib
 
 
 def noisy_matrix(n):
@@ -201,7 +205,10 @@ TESTS = [
 
 if __name__ == "__main__":
     for name, func, args in TESTS:
+        results = []
         print(f"TEST {name}")
         for A in args:
-            func(*A)
+            results.append(func(*A))
+        print(tabulate.tabulate(results, headers=["error_my", "error_lib"]))
         print("="*80)
+        print()
