@@ -102,10 +102,10 @@ def test_lu(A):
 def test_solve(A, b):
     x = lu_solve(A, b)
 
-    valid = np.all(A @ x == b)
-    print("PASS" if valid else "ERROR")
+    error = np.sum((np.dot(A, x) - b) ** 2)
+    print(f'Error = {error}')
 
-    return valid
+    return error
 
 
 def test_inv(A):
@@ -123,19 +123,25 @@ hilbert_generator = lambda n: np.fromfunction(lambda i, j: 1 / (i + j + 1), (n, 
 TESTS = [
     ("LU Decomposition", test_lu, (
         (np.array([[1, 0, 3], [0, 3, 1], [0, 0, 6]])),
-        (np.array([[1, 4, 5], [6, 8, 22], [32, 5., 5]])),
+        (np.array([[1, 4, 5], [6, 8, 22], [32, 5, 5]])),
         (hilbert_generator(5)),
         (hilbert_generator(7))
     )),
     ("LU Solve", test_solve, (
         (
-            (np.array([[1, 4, 5], [6, 8, 22], [32, 5., 5]]),
+            (np.array([[1, 4, 5], [6, 8, 22], [32, 5, 5]]),
              np.array([1, 2, 3.]))
         ),
+        (
+            (hilbert_generator(5), np.dot(hilbert_generator(5), np.arange(1, 6)))
+        ),
+        (
+            (hilbert_generator(7), np.dot(hilbert_generator(7), np.arange(1, 8)))
+        )
     )),
     ("LU Inverse", test_inv, (
         (np.array([[1, 0, 3], [0, 3, 1], [0, 0, 6]])),
-        (np.array([[1, 4, 5], [6, 8, 22], [32, 5., 5]])),
+        (np.array([[1, 4, 5], [6, 8, 22], [32, 5, 5]])),
         (hilbert_generator(5)),
         (hilbert_generator(7))
     ))
