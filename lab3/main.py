@@ -117,10 +117,15 @@ def test_inv(A):
     print(f"diff with lib: {diff}")
 
 
+hilbert_generator = lambda n: np.fromfunction(lambda i, j: 1 / (i + j + 1), (n, n), dtype=np.float) # since we are starting from i=0 and j=0
+
+
 TESTS = [
     ("LU Decomposition", test_lu, (
         (np.array([[1, 0, 3], [0, 3, 1], [0, 0, 6]])),
-        (np.array([[1, 4, 5], [6, 8, 22], [32, 5., 5]]))
+        (np.array([[1, 4, 5], [6, 8, 22], [32, 5., 5]])),
+        (hilbert_generator(5)),
+        (hilbert_generator(7))
     )),
     ("LU Solve", test_solve, (
         (
@@ -130,7 +135,9 @@ TESTS = [
     )),
     ("LU Inverse", test_inv, (
         (np.array([[1, 0, 3], [0, 3, 1], [0, 0, 6]])),
-        (np.array([[1, 4, 5], [6, 8, 22], [32, 5., 5]]))
+        (np.array([[1, 4, 5], [6, 8, 22], [32, 5., 5]])),
+        (hilbert_generator(5)),
+        (hilbert_generator(7))
     ))
 ]
 
