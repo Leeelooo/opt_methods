@@ -92,7 +92,7 @@ def test_lu(A):
     error_1 = np.linalg.norm(A - A_1)
 
     P, L, U = LU_FUNC(A)
-    error_2 = np.linalg.norm(P @ A - L @ U)
+    error_2 = np.linalg.norm(A - P @ L @ U)
 
     print(f"error my: {error_1}\terror lib:{error_2}")
 
@@ -102,7 +102,7 @@ def test_lu(A):
 def test_solve(A, b):
     x = lu_solve(A, b)
 
-    error = np.sum((np.dot(A, x) - b) ** 2)
+    error = np.linalg.norm(A @ x - b)
     print(f'Error = {error}')
 
     return error
