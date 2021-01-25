@@ -116,6 +116,19 @@ def test_inv(A):
 
     print(f"diff with lib: {diff}")
 
+    return diff
+
+
+def noisy_matrix(n):
+    np.random.seed(59005)
+
+    matrix = -np.random.choice(5, size=(n, n))
+    for i in range(n):
+        matrix[i, i] = -(np.sum(matrix[i]) - matrix[i, i]) + 10 ** -n
+
+    return matrix
+
+
 
 hilbert_generator = lambda n: np.fromfunction(lambda i, j: 1 / (i + j + 1), (n, n), dtype=np.float) # since we are starting from i=0 and j=0
 
@@ -124,8 +137,16 @@ TESTS = [
     ("LU Decomposition", test_lu, (
         (np.array([[1, 0, 3], [0, 3, 1], [0, 0, 6]])),
         (np.array([[1, 4, 5], [6, 8, 22], [32, 5, 5]])),
+        (noisy_matrix(5)),
+        (noisy_matrix(7)),
+        (noisy_matrix(9)),
+        (noisy_matrix(11)),
+        (noisy_matrix(13)),
         (hilbert_generator(5)),
-        (hilbert_generator(7))
+        (hilbert_generator(7)),
+        (hilbert_generator(9)),
+        (hilbert_generator(11)),
+        (hilbert_generator(13))
     )),
     ("LU Solve", test_solve, (
         (
@@ -133,17 +154,49 @@ TESTS = [
              np.array([1, 2, 3.]))
         ),
         (
+            (noisy_matrix(5), np.dot(noisy_matrix(5), np.arange(1, 6)))
+        ),
+        (
+            (noisy_matrix(7), np.dot(noisy_matrix(7), np.arange(1, 8)))
+        ),
+        (
+            (noisy_matrix(9), np.dot(noisy_matrix(9), np.arange(1, 10)))
+        ),
+        (
+            (noisy_matrix(11), np.dot(noisy_matrix(11), np.arange(1, 12)))
+        ),
+        (
+            (noisy_matrix(13), np.dot(noisy_matrix(13), np.arange(1, 14)))
+        ),
+        (
             (hilbert_generator(5), np.dot(hilbert_generator(5), np.arange(1, 6)))
         ),
         (
             (hilbert_generator(7), np.dot(hilbert_generator(7), np.arange(1, 8)))
+        ),
+        (
+            (hilbert_generator(9), np.dot(hilbert_generator(9), np.arange(1, 10)))
+        ),
+        (
+            (hilbert_generator(11), np.dot(hilbert_generator(11), np.arange(1, 12)))
+        ),
+        (
+            (hilbert_generator(13), np.dot(hilbert_generator(13), np.arange(1, 14)))
         )
     )),
     ("LU Inverse", test_inv, (
         (np.array([[1, 0, 3], [0, 3, 1], [0, 0, 6]])),
         (np.array([[1, 4, 5], [6, 8, 22], [32, 5, 5]])),
+        (noisy_matrix(5)),
+        (noisy_matrix(7)),
+        (noisy_matrix(9)),
+        (noisy_matrix(11)),
+        (noisy_matrix(13)),
         (hilbert_generator(5)),
-        (hilbert_generator(7))
+        (hilbert_generator(7)),
+        (hilbert_generator(9)),
+        (hilbert_generator(11)),
+        (hilbert_generator(13))
     ))
 ]
 
